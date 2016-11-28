@@ -38,21 +38,21 @@ class TupleDictionary
 	{
 		$hashes = array();
 
-		foreach ( $elements as $element )
+		foreach ( $elements as $key => $element )
 		{
 			if ( is_object( $element ) )
 			{
-				$hash = spl_object_hash( $element );
+				$hash = spl_object_hash( $element ) . $key;
 				$hashes[ $hash ] = $element;
 			}
 			else if ( is_array( $element ) )
 			{
-				extract( $this->hashArray( $element ) );
+				extract( $this->hashArray( $element ) ) . $key;
 				$hashes[ $hash ] = $element;
 			}
 			else
 			{
-				$hash = hash( 'sha256', $element );
+				$hash = hash( 'sha256', $element . $key );
 				$hashes[ $hash ] = $element;
 			}
 		}
