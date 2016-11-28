@@ -79,7 +79,7 @@ In this example, $key3 looks very much like $key1 execpt the array index is 'toc
 ```php
 $key3 = array(
 	$obj1,
-	array( 'tock' => $dict ),
+	array( 'tock' => $obj2 ),
 	null,
 	null,
 	"x",
