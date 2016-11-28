@@ -24,10 +24,25 @@ class TupleDictionary
 	private $data = array();
 
 	/**
-	 * Default constructor
+	 * The name of the hashing algorithm to use
+	 * @var string
 	 */
-	function __construct()
-	{}
+	private $hash_algorithm = 'sha256';
+
+	/**
+	 * Constructor
+	 *
+	 * @param string $hash_algorithm The name of the hash algorithm to use and will be 'sha256' by default.
+	 *                               Must be one of the name returned by the PHP function hash_algos().
+	 * @throws Exception An exception will be thrown if the name of the algorithm is not recognized.
+	 */
+	function __construct( $hash_algorithm = 'sha256' )
+	{
+		if ( ! in_array( strtolower( $hash_algorithm ), hash_algos() ) )
+			throw new Exception();
+
+		$this->hash_algorithm = $hash_algorithm;
+	}
 
 	/**
 	 * Generates hashes for all the elements of the key
@@ -52,12 +67,12 @@ class TupleDictionary
 			}
 			else
 			{
-				$hash = hash( 'sha256', $element . $key );
+				$hash = hash( $this->hash_algorithm, $element . $key );
 				$hashes[ $hash ] = $element;
 			}
 		}
 
-		return array( 'hash' => hash( 'sha256', serialize( array_keys( $hashes ) ) ), 'element_hashes' => $hashes );
+		return array( 'hash' => hash( $this->hash_algorithm, serialize( array_keys( $hashes ) ) ), 'element_hashes' => $hashes );
 	}
 
 	/**
