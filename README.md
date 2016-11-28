@@ -18,6 +18,26 @@ $obj1 = new \stdClass();
 $obj2 = new \stdClass();
 ```
 
+Here are a couple of keys as examples.  They don't mean any thing.  They are only intended to show that any type can be used to define a key. In $key1 one of the objects is used, an associative array is used pointing to the other object. Two null values are also used.
+
+Note that key elements are not named so the position or order of the element in the key array is important.  Unless the exact order is reproduced the key will be regarded as being different. In examples like this it looks arbitrary but in a real world example it will make sense because the caller will know the 'meaning' of the element in each position.
+
+```php
+$key1 = array(
+	$obj1,
+	array( 'tick' => $obj2 ),
+	null,
+	null,
+	"x",
+);
+
+$key2 = array(
+	$obj2,
+	array( $dict ),
+	"z",
+);
+```
+
 Create an instance of the TupleDictionary
 
 ```php
@@ -27,11 +47,11 @@ $dict = new \TupleDictionary();
 Time to add some values and keys.  Note the key is passed as any array and the elements can be of any time.  There can be different numbers of elements used in each key.  The examples show using keys made from one of the objects, an array, a string and a 'null' value.
 
 ```php
-$dict->addValue( array( $obj1, array( $dict ), null, "x" ), 1 );
-$dict->addValue( array( $obj2, array( $dict ), "z" ), 2 );
+$dict->addValue( $key1, 1 );
+$dict->addValue( $key2, 2 );
 ```
 
-Items are retrieved by keys and all the used key can be added.
+Items are retrieved by keys and all the used keys can be accessed.  The **getValue** function accepts a key and an optional default value to return if the key does not exist (which will be 'null' if a default is not provided).
 
 ```php
 $keys = $dict->getKeys();
@@ -41,12 +61,45 @@ foreach ( $keys as $key )
 }
 ```
 
-Like a built-in dictionary the items can be deleted by key value.
+The keys can be reused or re-created.  The in-memory instance of the key is not important only the element values are significant.
 
 ```php
-$result = $dict->delete( array( $obj1, array( $dict ), null, "x" ) );
+$key2 = array(
+	$obj2,
+	array( $dict ),
+	"z",
+);
+
+$value = $dict->getValue( $key1, "yy" );
+$value = $dict->getValue( $key2 );
+```
+
+In this example, $key3 looks very much like $key1 execpt the array index is 'tock' instead of 'tick'.  The purpose of this example is to show that when a array is used as a key element the index values of the array are significant.  Using this key the default value 'yy' will be returned.
+
+```php
+$key3 = array(
+	$obj1,
+	array( 'tock' => $dict ),
+	null,
+	null,
+	"x",
+);
+
+$value = $dict->getValue( $key3, "yy" );
+```
+
+Like a built-in dictionary the items can be deleted by key value.  After deleting the $keys array will contain only one element.
+
+```php
+$result = $dict->delete( $key1 );
 $keys = $dict->getKeys();
 ```
+
+## Inside
+
+All keys are turned into hashes and then one grand hash is created.  This grand hash becomes the key in a standard PHP associative array against which both the keys and the values are stored.  When a get or delete request is received again a grand hash is created from the keys and the grand hash is used to determine which values to process.
+
+**Caution** Computing hashes for strings, numbers and null is straight forward.  The internal id of a class instance is by calling the built-in function **spl_object_hash**.  However, a hash for arrays is computed by examining and hashing each element.  If an element is a nested array then each of its elements is examined and hashed recursively.  This means if the array is deeply nested the performance will be knocked.
 
 ## Possible future extensions
 
