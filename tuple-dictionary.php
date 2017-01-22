@@ -108,12 +108,24 @@ class TupleDictionary
 	{
 		$result = $this->hashArray( $key );
 
-		if ( ! isset( $this->data['values'][ $result['hash'] ] ) )
+		return $this->getValueByHash( $result['hash'], $default );
+	}
+
+	/**
+	 * Get a value for a specific hash
+	 *
+	 * @param string $hash
+	 * @param mixed $default
+	 * @return $array The value corresponding to the hash
+	 */
+	public function &getValueByHash( $hash, $default = null )
+	{
+		if ( ! isset( $this->data['values'][ $hash ] ) )
 		{
 			return $default;
 		}
 
-		return $this->data['values'][ $result['hash'] ];
+		return $this->data['values'][ $hash ];
 	}
 
 	/**
