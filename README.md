@@ -44,7 +44,7 @@ Create an instance of the TupleDictionary
 $dict = new \TupleDictionary();
 ```
 
-Time to add some values and keys.  Note the key is passed as any array and the elements can be of any time.  There can be different numbers of elements used in each key.  The examples show using keys made from one of the objects, an array, a string and a 'null' value.
+Time to add some values and keys.  Note the key is passed as an array and the elements can be of any type.  There can be different numbers of elements used in each key.  The examples show using keys made from one of the objects, an array, a string and a 'null' value.
 
 ```php
 $dict->addValue( $key1, 1 );
